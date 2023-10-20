@@ -1,3 +1,5 @@
+#Homework problem P.6 B, C, D
+
 
 def priority():
     #         t=  0       1      2     3     4    5      6    7       8
