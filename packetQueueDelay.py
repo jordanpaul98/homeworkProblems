@@ -1,6 +1,51 @@
-#Homework problem P.6 B, C, D
+'''
+Jordan Paul 
+Homework problem P.6 part A, B, C, D
 
+       2    4         7         9              12
+a ->   1    3    6    5         8         10   11    (arriving)
+t ->   0 -- 1 -- 2 -- 3 -- 4 -- 5 -- 6 -- 7 -- 8 -- 9 -- ....
+l ->      1 ....                                     (leaving)    
 
+Assuming FIFO service, indicate the time at which packet 2 trhough 12 each leave the queue.
+for each packet, what is the delay between its arrival and transmitted
+'''
+def fifo():
+    arrivals = [[1, 2], [3, 4], [6], [5, 7], [], [8, 9], [], [10], [11, 12]]
+
+    queue = []
+    leaving = {}
+
+    t = 0
+
+    while arrivals or queue:
+        if arrivals:
+            for item in arrivals.pop(0):
+                queue.append([item, t])
+                print(f"Package: {item} Arrived TIME: {t}")
+
+        if queue:
+            packet, arrive = queue.pop(0)
+            leaving[packet] = [arrive, t]
+            print(f"Packet {packet}  leaving TIME: {t}   queue: {len(queue)}")
+
+        t += 1
+
+    print("")
+    leaving = {packet: leaving[packet] for packet in range(1, len(leaving) + 1)}
+
+    avg_dly = 0
+    for packet, leave in leaving.items():
+        arrive, depart = leave
+        print(f"packet: {packet}  arrival: {arrive}   leaving: {depart}   delay: {depart - arrive}")
+        avg_dly += depart - arrive
+
+    print("Average delay: ", round(avg_dly / len(leaving), 4))
+
+'''
+Now assume a priority service, and assume that odd-numbered packets are high prioroty, and
+even-numbered packets are low priority
+'''
 def priority():
     #         t=  0       1      2     3     4    5      6    7       8
     arrivals = [[1, 2], [3, 4], [6], [5, 7], [], [8, 9], [], [10], [11, 12]]
@@ -40,12 +85,10 @@ def priority():
         packet = leaving[i]
         print(f"packet: {i}  arrival: {packet[0]}   leaving: {packet[1]}   delay: {packet[1] - packet[0]}")
 
-
-    print()
-    for i in range(1, len(leaving) + 1):
-        packet = leaving[i]
-        print(f"{i} {packet[0]} {packet[1]} {packet[1] - packet[0]}")
-
+'''
+Now assume round robin server. Assume that packets 1, 2, 3, 4, 6, 11, 12 are from class 1,
+and packets 4, 5, 7, 8, 9, 10 are from class 2
+'''
 def round_robin():
     #         t=  0       1      2     3     4    5      6    7       8
     arrivals = [[1, 2], [3, 4], [6], [5, 7], [], [8, 9], [], [10], [11, 12]]
@@ -82,7 +125,6 @@ def round_robin():
         t += 1
 
     ordered = {}
-
     for packet_leaving in leaving:
         packet, arrive, leave = packet_leaving
         ordered[packet] = [arrive, leave]
@@ -92,7 +134,12 @@ def round_robin():
         arrive, leave = ordered[i]
         print(f"packet: {i}  arrival: {arrive}   leaving: {leave}   delay: {leave - arrive}")
 
+'''
+Now assume weighted fair queuing (WFQ) service. Assume that odd-numbered packets are from class 1,
+and even0numbered packes are from class 2. Class 1 has weight of 2, while class 2 has WFG weight of 1
 
+#NOTE think this isnt fully done correctly
+'''
 def weighted_fair():
     #         t=  0       1      2     3     4    5      6    7       8
     arrivals = [[1, 2], [3, 4], [6], [5, 7], [], [8, 9], [], [10], [11, 12]]
@@ -115,7 +162,7 @@ def weighted_fair():
                 queue[item] = t
                 print(f"Package: {item} Arrived TIME: {t}")
 
-        if class1 and class1[0] in queue and class1[0] // weight1 < class2[0] * weight2:
+        if class1 and class1[0] in queue and class1[0] // weight1 < class2[0] // weight2:
             c = class1.pop(0)
             packet = [c, queue.pop(c), t]
             leaving.append(packet)
