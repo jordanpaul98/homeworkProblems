@@ -139,8 +139,3 @@ def weighted_fair():
 
 
 
-    print("\n")
-    for i in range(1, len(ordered) + 1):
-        arrive, leave = ordered[i]
-        print(f"{i} {arrive} {leave} {leave - arrive}")
-
