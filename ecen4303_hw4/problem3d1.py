@@ -17,6 +17,9 @@ def problem3d1():
     
     3.2.21
     Vgb = Vfb + Ys + y * sqrt(Ys + Ot * e ^ (Ys - (2 * Of + Vcb))/Ot)
+    
+    from 3.2.21
+    Vcb = Ys - 2Of - Ot * ln( ( (Vgb - Vfb - Ys) ^ 2 / y^2) / Ot )
 
     '''
 
@@ -157,6 +160,11 @@ def problem3d1():
 
             axs[i].legend(fontsize='14')
 
+            axs[i].text((Vgb[0] + vlb[i]) / 2, mn_ys, 'Depletion', ha='center')
+            axs[i].text((vlb[i] + vmb[i]) / 2, mn_ys, 'Weak', ha='center')
+            axs[i].text((vmb[i] + vhb[i]) / 2, mn_ys, 'Moderate', ha='center')
+            axs[i].text((vhb[i] + Vgb[-1]) / 2, mn_ys, 'Strong', ha='center')
+
         axs[-1].set_xlabel("Vgb", fontsize='14')
 
         plt.show()
@@ -168,7 +176,7 @@ def problem3d1():
 
         vcb = between(Vcb, resolution=100)
         ys = [[Bisection(lambda x: Vgb_3_2_21(Vfb, x, y, ot, ofp, v),
-                        0, 2.5, vgb, max_iterations=1000) for v in vcb] for vgb in Vgb]
+                        min(Vcb), max(Vcb), vgb, max_iterations=1000) for v in vcb] for vgb in Vgb]
 
         fog, axs = plt.subplots(len(Vgb) + 1, 1, figsize=(12, 20))
 
@@ -196,8 +204,11 @@ def problem3d1():
             of_line_x = [min(Vcb), find_of_cross(vcb, _ys, [v + ofp for v in vcb])]
             of_line_y = [ofp, _ys[vcb.index(of_line_x[-1])]]
 
+            prev_x = of_line_x[-1]
+
             axs[i].plot(of_line_x, of_line_y, 'o--', label=f"{phi.upper()}f + Vcb")
-            axs[i].text(of_line_x[-1] + 0.05, ofp, "Vw(Vgs)")
+            axs[i].text(of_line_x[-1] + 0.05, ofp * 1.5, "Vw(Vgs)")
+            axs[i].text((max(Vcb) + of_line_x[-1]) / 2, ofp, 'Depletion', ha='center')
             axs[i].vlines(of_line_x[-1], ofp, of_line_y[-1], colors='grey')
 
             # Of line Vw(Vgbs)
@@ -205,8 +216,10 @@ def problem3d1():
             of_line_y = [2 * ofp, _ys[vcb.index(of_line_x[-1])]]
 
             axs[i].plot(of_line_x, of_line_y, 'o--', label=f"2{phi.upper()}f + Vcb")
-            axs[i].text(of_line_x[-1] + 0.05, ofp, "Vu(Vgs)")
+            axs[i].text(of_line_x[-1] + 0.05, ofp * 1.5, "Vu(Vgs)")
+            axs[i].text((prev_x + of_line_x[-1]) / 2, ofp, 'Weak', ha='center')
             axs[i].vlines(of_line_x[-1], ofp, of_line_y[-1], colors='grey')
+            axs[i].text(sum(of_line_x) / 2, ofp, 'Strong | Moderate', ha='center')
 
             axs[i].legend(fontsize='14')
 
