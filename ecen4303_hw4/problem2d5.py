@@ -1,5 +1,16 @@
 
 def problem2d5():
+    '''
+    find the approximate for delta phi.
+    
+    show that delta phi is weakly dependant on Vgs plugging in y between 0 to 2 and Vgb - Vfb - 2 * Of
+    is up several volts
+    
+    using the equation 2.6.17 obtained. find a average for Ot * n. where n is average across y for different Vgb'
+    where vgb' = Vgb - Vfb - 2 * Of
+    
+    Vgb' = {2, 3, 4, 5}
+    '''
 
     import matplotlib.pyplot as plt
     
@@ -35,12 +46,12 @@ def problem2d5():
 
     fog, axs = plt.subplots(4, 1, figsize=(12, 20))
 
-    phi = '\u00D8'
-    delta = '\u0394'
+    phi = '\u00D8'.upper()
+    delta = '\u0394'.upper()
 
     for i, axis in enumerate(axs):
-        if i == 0:
-            axis.set_title(f"{delta}{phi} = {phi}t * n        With [(Vgb - Vfb - 2{phi}f) = {Vgb_Vfb_2Of[i]}]")
+        axis.set_title(f"{delta}{phi} = {phi}t * n        With [(Vgb - Vfb - 2{phi}f) = {Vgb_Vfb_2Of[i]}]"
+                       f"    =>  {delta}{phi} = 2 * {phi}f + {round(s[i], 2)} * {phi}t")
         axis.set_ylabel("n")
         axis.plot(Y, n[i], label=f"inner 2{phi}f estimated")
         axis.plot(Y, n_ignored[i], label=F"inner 2{phi}f ignored")
@@ -48,6 +59,10 @@ def problem2d5():
         axis.legend(fontsize='14')
 
     plt.show()
+
+
+
+
 
 
 
