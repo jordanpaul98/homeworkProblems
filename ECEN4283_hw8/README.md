@@ -6,7 +6,7 @@ running it gives this output:
 
   Step  |       N'      | D(t), p(t) | D(u), p(u) | D(v), p(v) | D(w), p(w) | D(y), p(y) | D(z), p(z) |
   
-     0  |   x           |     None,  |     None,  |       3, x |       6, x |       6, x |       8, x |
+     0  |   x           |     inf,  |     inf,  |       3, x |       6, x |       6, x |       8, x |
      
      1  |   xv          |       7, v |       6, v |       3, x |       6, x |       6, x |       8, x |
      
