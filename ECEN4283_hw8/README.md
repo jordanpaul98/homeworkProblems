@@ -3,6 +3,7 @@ HW 8 problem p3 from chapter 5.
 need both main.py and DijkstrasShortestPath.py
 
 running it gives this output:
+
   Step  |       N'      | D(t), p(t) | D(u), p(u) | D(v), p(v) | D(w), p(w) | D(y), p(y) | D(z), p(z) |
   
      0  |   x           |     None,  |     None,  |       3, x |       6, x |       6, x |       8, x |
