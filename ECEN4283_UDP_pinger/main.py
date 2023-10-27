@@ -14,7 +14,8 @@ if __name__ == '__main__':
     import server
     import client
 
-    ipAddress = '10.227.53.6'
+    #  Your machines IPv4 address
+    ipAddress = ''
 
     #Start a thread to run the server side of UDP pinger
     Thread(target=server.Server, daemon=True, args=(ipAddress,)).start()
