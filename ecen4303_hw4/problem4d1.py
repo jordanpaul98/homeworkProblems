@@ -1,5 +1,6 @@
 
 
+
 def problem4d1():
 
     from math import log as ln, exp, sqrt
@@ -152,6 +153,14 @@ def problem4d1():
         print(f"Looking for gate voltage: {gate_voltage}   with ysl={round(ysl[-1], 4)}: got {functionA(ysl[-1])}")
         print("")
 
+    plt.plot([i for i in range(len(vgb))], vgb, label="Vgb expected")
+    plt.plot([i for i in range(len(vgb))], [functionB(ys) for ys in yso], label='Vgb from Yso using equation 4.3.14')
+    plt.plot([i for i in range(len(vgb))], [functionA(ys) for ys in ysl], label='Vgb from Ysl using equation 4.3.14')
+    plt.plot([i for i in range(len(vgb))], ysl, label='Ysl')
+    plt.plot([i for i in range(len(vgb))], yso, label='Yso')
+    plt.legend()
+    plt.show()
+
     ids1 = []
     ids2 = []
     ids = []
@@ -166,7 +175,7 @@ def problem4d1():
     plt.yscale('log')
     plt.xlim(0.8, 1.5)
     plt.ylim(1e-8, 1e-2)
-    
+
     plt.ylabel("Log(IDS)")
     plt.xlabel("Vgb")
 
