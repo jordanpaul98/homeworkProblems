@@ -18,11 +18,11 @@ def Client(ipAddress):
     # Extra
 
     def rtt_stats():
-        print(f"pings sent: {sent_count} ping responses: {received_count}  Packet Loss: {sent_count - received_count}")
-        print(f"Packet Loss Percent {100 * (sent_count - received_count)/sent_count:5.2f}%")
-        print(f"Average RTT: {avg_rtt:8.2f}us")
-        print(f"Minimum RTT: {min_rtt:8.2f}us")
-        print(f"Maximum RTT: {max_rtt:8.2f}us")
+        print(f"  PINGS - sent: {sent_count} response: {received_count} loss: {sent_count - received_count}")
+        print(f" % LOSS - {100 * (sent_count - received_count)/sent_count:.2f}%")
+        print(f"AVG RTT - {avg_rtt:10.2f} ms")
+        print(f"MIN RTT - {min_rtt:10.2f} ms")
+        print(f"MAX RTT - {max_rtt:10.2f} ms")
 
     min_rtt, max_rtt, avg_rtt = 2 ** 63, 0, 0
     sent_count, received_count = 0, 0
@@ -42,14 +42,14 @@ def Client(ipAddress):
 
                 # print the sent message
 
-                print(message)
+                print(f"\nSENT - {message}")
 
                 # receive from the socket using `recvfrom`
                 response, addr = sock.recvfrom(2048)
 
                 # print the received message
 
-                print(response.decode())
+                print(f"RECEIVED - {response.decode()}")
 
                 # store current time to `endt`
 
@@ -68,13 +68,13 @@ def Client(ipAddress):
 
                 # print RTT
 
-                print(f"RTT: {telapsed}us")
+                print(f"      RTT - {telapsed:10.2f} ms")
                 rtt_stats()
 
                 # fill-2 ends
 
             except socket.timeout:
-                print("#" + str(i) + " Requested Time out\n")
+                print("TIMEOUT - #" + str(i) + " Requested Time out\n")
 
     finally:
         print(f"\nclosing socket")
