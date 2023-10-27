@@ -68,7 +68,7 @@ def Client(ipAddress):
 
                 # print RTT
 
-                print(f"      RTT - {telapsed:10.2f} ms")
+                print(f"    RTT - {telapsed:10.2f} ms")
                 rtt_stats()
 
                 # fill-2 ends
