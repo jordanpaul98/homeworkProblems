@@ -11,7 +11,7 @@ def Client(ipAddress):
     server_addr = (ipAddress, 12000)
 
     # set timeout for the socket
-    sock.settimeout(4)
+    sock.settimeout(1)
 
     # Fill-1 ends
 
