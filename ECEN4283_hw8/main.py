@@ -25,7 +25,7 @@ def hw():
     table = DijkstrasShortestPath.dijkstrasShortestPath(starting_node, connection_map, weights)
     for i in range(len(table)):
         for node in connection_map:
-            if node in table[i] and table[i][node] == 2 ** 63:
+            if node in table[i] and table[i][node] is None:
                 table[i][node] = float('inf')
 
 
