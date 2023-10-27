@@ -2,6 +2,7 @@
 def Client(ipAddress):
     import socket
     import time
+    import random
 
     # Fill-1
     # create an UDP socket
@@ -13,39 +14,37 @@ def Client(ipAddress):
     # set timeout for the socket
     sock.settimeout(1)
 
-    # Fill-1 ends
-
-    # Extra
-
     def rtt_stats():
-        print(f"[CLIENT]  pings sent: {sent_count} ping responses: {received_count}  Packet Loss: {sent_count - received_count}")
-        print(f"[CLIENT]  Packet Loss Percent {100 * (sent_count - received_count)/sent_count:5.2f}%")
-        print(f"[CLIENT]  Heartbeat Reported Losses: {reported_losses}")
-        print(f"[CLIENT]  Average RTT: {avg_rtt:8.2f} us")
-        print(f"[CLIENT]  Minimum RTT: {min_rtt:8.2f} us")
-        print(f"[CLIENT]  Maximum RTT: {max_rtt:8.2f} us")
+        print(f"[CLIENT]     PINGS - sent: {sent_count} response: {received_count} loss: {sent_count - received_count}")
+        print(f"[CLIENT]    % LOSS - {100 * (sent_count - received_count)/sent_count:.2f}%")
+        print(f"[CLIENT]  LOST SEQ - {lost_packets}")
+        print(f"[CLIENT]   AVG RTT - {avg_rtt:10.2f} ms")
+        print(f"[CLIENT]   MIN RTT - {min_rtt:10.2f} ms")
+        print(f"[CLIENT]   MAX RTT - {max_rtt:10.2f} ms")
 
     min_rtt, max_rtt, avg_rtt = float('inf'), 0, 0
     sent_count, received_count = 0, 0
-    ping_amount = 10
 
-    reported_losses = 0
+    lost_packets = []
 
     def send_heartbeat():
-        nonlocal reported_losses
-        heart_beat_message = f'heartbeat,{sent_count - 1},{time.time()}'
+        heart_beat_message = f'heartbeat,{sent_count},{time.time_ns()}'
         try:
+            time.sleep((25 + random.randint(0, 10))/1000) # adding some random delay to packet
+
             sock.sendto(heart_beat_message.encode(), server_addr)
+            print(f"\n[CLIENT]  SENT - Heartbeat")
             response, addr = sock.recvfrom(2048)
             response = response.decode()
 
-            message, losses = response.split(',')
-            reported_losses += int(losses)
+            import ast
+            message, losses = response.split(':')
+            lost_packets.extend([seq for seq in ast.literal_eval(losses) if seq not in lost_packets])
         except socket.timeout:
             pass
 
     try:
-        for i in range(ping_amount):
+        for i in range(10):
             start = time.perf_counter_ns()
             message = 'Ping #' + str(i) + " " + time.ctime(time.time())
             try:
@@ -53,25 +52,26 @@ def Client(ipAddress):
 
                 # send to the socket using `sendto`
                 sent_count += 1
+                time.sleep((25 + random.randint(0, 10)) / 1000)  # adding some random delay to packet
                 sock.sendto(message.encode(), server_addr)
 
                 # print the sent message
 
-                print("[CLIENT]  ", message)
+                print(f"\n[CLIENT]      SENT - {message}")
 
                 # receive from the socket using `recvfrom`
                 response, addr = sock.recvfrom(2048)
 
                 # print the received message
 
-                print("[CLIENT]  ", response.decode())
+                print(f"[CLIENT]  RECEIVED - {response.decode()}")
 
                 # store current time to `endt`
 
                 endt = time.perf_counter_ns()
 
                 # compute the elapsed time
-                telapsed = (endt - start)/1000
+                telapsed = (endt - start)/10 ** 6
 
                 # compute max and min RTT
                 min_rtt = min((min_rtt, telapsed))
@@ -82,14 +82,13 @@ def Client(ipAddress):
                 received_count += 1
 
                 # print RTT
-
-                print(f"[CLIENT]  RTT: {telapsed} us")
+                print(f"[CLIENT]       RTT - {telapsed:10.2f} ms")
                 rtt_stats()
 
                 # fill-2 ends
 
             except socket.timeout:
-                print("[CLIENT]  #" + str(i) + " Requested Time out\n")
+                print("[CLIENT]   TIMEOUT - #" + str(i) + " Requested Time out")
 
             # send a heart beat after each message
             send_heartbeat()
@@ -99,4 +98,3 @@ def Client(ipAddress):
         rtt_stats()
 
         sock.close()
-
