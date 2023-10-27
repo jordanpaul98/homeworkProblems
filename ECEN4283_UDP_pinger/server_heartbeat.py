@@ -16,20 +16,18 @@ def Server(ipAddress):
     print("[SERVER]  Started UDP server on port 12000")
 
     last_response = time.time_ns()
-    last_sequence = -1
-    timeout_count = 0
+    last_sequence = 0
 
-    rtt_delay = 0
     keep_alive = True
 
     def monitor_heartbeat():
         nonlocal keep_alive
         while True:
             if (time.time() - last_response) > 5:
-                print("\n[SERVER]  Client stopped responding after 5 seconds")
+                print("\n[SERVER]  Client stopped responding after 5 seconds stopping server")
                 keep_alive = False
                 break
-            time.sleep(0.1)
+            time.sleep(0.01)
 
     Thread(target=monitor_heartbeat, daemon=True).start()
 
@@ -41,7 +39,7 @@ def Server(ipAddress):
 
             if "Ping" in message:
 
-                print("[SERVER]  Ping Message Received")
+                #print("[SERVER]  Ping Message Received")
 
                 # Capitalize the message from the client
                 items = message.split(" ")
@@ -53,30 +51,38 @@ def Server(ipAddress):
                     continue
 
                 # record the sequence if we actually "Acknowledge" the message
-                last_sequence = int(items[1].replace("#", ""))
+                last_sequence = int(items[1].replace("#", "")) + 1
 
                 # Otherwise, the server responds
+                time.sleep((25 + random.randint(0, 10)) / 1000)  # adding some random delay to packet
                 serverSocket.sendto(message.encode(), address)
 
             elif "heartbeat" in message:
 
-                print("[SERVER]  Heartbeat Message Received")
+                print("\n[SERVER]  Heartbeat Message Received")
 
                 body, sequence, time_stamp = message.split(',')
-                last_response = float(time_stamp)
+                last_response = float(time_stamp) / 10 ** 9
 
-                print(f"[SERVER]  sequence received: {sequence}"
-                      f"  current sequence: {last_sequence}"
-                      f"  Timestamp: {last_response}")
+                if False:
+                    print(f"[SERVER]  sequence received: {sequence}"
+                          f"  current sequence: {last_sequence}"
+                          f"  Timestamp: {last_response}")
 
-                rtt_delay = time.time() - float(time_stamp)
+                transport_delay = time.time_ns() - float(time_stamp)
+                missing_packets = [i for i in range(last_sequence, int(sequence))]
 
-                serverSocket.sendto(f"hello,{int(sequence) - last_sequence}".encode(), address)
+                print(f"[SERVER]  Transport delay - {(transport_delay)/10**6} ms")
+                if missing_packets:
+                    print(f"[SERVER]  Missing packets detected")
+                    print(f"[SERVER]  Acknowledge Sequence: {last_sequence} ")
+                    print(f"[SERVER]     Expected Sequence: {sequence} ")
+                    print(f"[SERVER]    SENT - Missing Seq: {missing_packets}")
+                else:
+                    print(f"[SERVER]  No missing packets detected")
+
+                time.sleep((25 + random.randint(0, 10)) / 1000)  # adding some random delay to packet
+                serverSocket.sendto(f"hello:{missing_packets}".encode(), address)
         except timeout:
             pass
     serverSocket.close()
-
-
-
-
-
