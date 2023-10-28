@@ -3,7 +3,7 @@ Jordan Paul: ECEN 4283 project UDP pinger
 Main.py to start both client and server utilizing threading to initialize the server to wait for packets
 and to start client to send packets to the server
 
-ipAdress set to your machine IPv4 address
+ipAddress set to your machine IPv4 address
 
 will need server.py and client.py from repository
 records RTT, average RTT, min RTT and max RTT
@@ -11,8 +11,8 @@ records RTT, average RTT, min RTT and max RTT
 heartbeat implementation:
 
 server_heartbeat.py and client_heartbeat.py will implement a heartbeat to let the server know that the client is
-still connected. Also the client will sent the server a seq which repersents the number of packets sent,
-the server will compare that to it acknowlegde sewquence number and will report and return to client a list of
+still connected. Also the client will sent the server a seq which represents the number of packets sent,
+the server will compare that to it acknowledge sequence number and will report and return to client a list of
 leading up sequence numbers missing
 """
 if __name__ == '__main__':
