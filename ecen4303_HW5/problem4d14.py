@@ -127,6 +127,7 @@ def Problem4d14():
     L = 0.1 * 10 ** -4
     Vsb = 0
     Vdb = 1.5
+    Vgb = [1, 1.5]
 
     vds = between([0, 1.5], 1000)
 
@@ -179,7 +180,7 @@ def Problem4d14():
 
     full_ids = {}
 
-    for vgb in [1, 1.5]:
+    for vgb in Vgb:
 
         vp = Vp(gamma, vgb, Vfb, phi_0)
 
@@ -193,9 +194,11 @@ def Problem4d14():
                 ids.append( Idsn_a(W, L, u, cox, vgb, Vfb, v, Vsb, phi_0, gamma) )
             else: # Vdn > Vp
                 # Ids' in saturation
+                ids.append(ids[-1])
+
+                #for marking out Idsn after Vp
                 Idsn_dw_y.append(Idsn_a(W, L, u, cox, vgb, Vfb, v, Vsb, phi_0, gamma))
                 Idsn_dw_x.append(v)
-                ids.append(ids[-1])
 
             full_ids[vgb].append(Idsn_a(W, L, u, cox, vgb, Vfb, v, Vsb, phi_0, gamma))
 
@@ -267,28 +270,54 @@ def Problem4d14():
 
         return (vgs - vt) / alpha
 
-    vgb = 1
-
     alpha = Alpha(gamma, phi_0, Vsb)
 
     vto = Vto(Vfb, phi_0, gamma)
     vt = Vt(vto, gamma, phi_0, Vsb)
-    vdsp = Vdsp(vgb, vt, alpha)
 
-    ids_reserved = ids
-    plt.plot(vds, ids, label='4.7.2')
-    ids.clear; ids = []
-    for v in vds:
-        if v <= vdsp: # Vds <= Vds'
-            ids.append( Ids_a(W, L, u, cox, vgb, vt, v, alpha) )
-        else:
-            ids.append( Ids_b(W, L, u, cox, vgb, vt, alpha) )
+    alpha_char = '\u03B1'
 
+    for vgb in Vgb:
 
-    #plt.plot(vds, full_ids, label='ids curve')
-    plt.plot(vds, ids, label='4.7.27')
-    plt.legend()
-    #plt.show()
+        vdsp = Vdsp(vgb, vt, alpha) # Vds' prime
+
+        print(vdsp)
+
+        ids = []
+        Idsn_dw_x = []
+        Idsn_dw_y = []
+        for v in vds:
+            if v <= vdsp: # Vds <= Vds'
+                ids.append( Ids_a(W, L, u, cox, vgb, vt, v, alpha) )
+            else:
+                ids.append( Ids_b(W, L, u, cox, vgb, vt, alpha) )
+
+                # for marketing out Ids curve beyond Vds'
+                Idsn_dw_x.append(v)
+                Idsn_dw_y.append(Ids_a(W, L, u, cox, vgb, vt, v, alpha))
+
+        Idsn_dw_x = Idsn_dw_x[:int(.3 * len(Idsn_dw_x))]
+        Idsn_dw_y = Idsn_dw_y[:int(.3 * len(Idsn_dw_y))]
+
+        ix = min(Idsn_dw_x) + (max(Idsn_dw_x) - min(Idsn_dw_x)) / 2
+        iy = min(Idsn_dw_y) + (max(Idsn_dw_y) - min(Idsn_dw_y)) / 2
+
+        plt.text(ix, iy, "Idsn", ha='center', va='top', fontsize=11)
+
+        plt.vlines(vdsp, min(ids), max(ids), color='grey', linestyles='--')
+        plt.hlines(max(Idsn_dw_y), 0, vdsp, color='grey', linestyles='--')
+        plt.text(vdsp, min(ids) - 0.00005, "V'ds", ha='center', va='top', fontsize=13)
+        plt.text(0, max(Idsn_dw_y), "I'ds", ha='right', va='center', fontsize=13)
+
+        #plt.plot(vds, full_ids, label='ids curve')
+        plt.plot(vds, ids, label=f"Vgb={vgb:.1f} & {alpha_char}={alpha:.3f}", linewidth=3)
+        plt.plot(Idsn_dw_x, Idsn_dw_y, "r--")
+
+    plt.title(f"Part (b) --  Ids vs. Vds using 4.7.24 with {alpha_char} from 4.7.27")
+    plt.ylabel("Ids(A)", fontsize=14)
+    plt.xlabel("Vds", fontsize=14)
+    plt.legend(loc='lower right')
+    plt.show()
 
     # =======================================================================================
     # Improve Alpha     Improve Alpha     Improve Alpha     Improve Alpha     Improve Alpha
