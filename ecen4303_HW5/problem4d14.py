@@ -127,7 +127,7 @@ def Problem4d14():
     L = 0.1 * 10 ** -4
     Vsb = 0
     Vdb = 1.5
-    Vgb = [1, 1.5]
+    Vgb = [1, 1.5] # add vgb as needed: can't go any higher than 2.1
 
     vds = between([0, 1.5], 1000)
 
