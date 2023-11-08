@@ -196,7 +196,7 @@ def Problem4d14():
                 # Ids' in saturation
                 ids.append(ids[-1])
 
-                #for marking out Idsn after Vp
+                #for plotting out Idsn after Vp
                 Idsn_dw_y.append(Idsn_a(W, L, u, cox, vgb, Vfb, v, Vsb, phi_0, gamma))
                 Idsn_dw_x.append(v)
 
@@ -292,7 +292,7 @@ def Problem4d14():
             else:
                 ids.append( Ids_b(W, L, u, cox, vgb, vt, alpha) )
 
-                # for marketing out Ids curve beyond Vds'
+                # for plotting out Ids curve beyond Vds'
                 Idsn_dw_x.append(v)
                 Idsn_dw_y.append(Ids_a(W, L, u, cox, vgb, vt, v, alpha))
 
