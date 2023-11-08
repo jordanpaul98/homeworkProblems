@@ -177,7 +177,6 @@ def Problem4d14():
         return outer * inner
 
     phi_0 = Phi_0(phi_f, phi_t)
-
     full_ids = {}
 
     for vgb in Vgb:
@@ -185,9 +184,10 @@ def Problem4d14():
         vp = Vp(gamma, vgb, Vfb, phi_0)
 
         ids = []
-        full_ids[vgb] = []
         Idsn_dw_x = []
         Idsn_dw_y = []
+
+        full_ids[vgb] = []
 
         for v in vds:
             if v <= vp: # Vdn <= Vp
@@ -200,7 +200,7 @@ def Problem4d14():
                 Idsn_dw_y.append(Idsn_a(W, L, u, cox, vgb, Vfb, v, Vsb, phi_0, gamma))
                 Idsn_dw_x.append(v)
 
-            full_ids[vgb].append(Idsn_a(W, L, u, cox, vgb, Vfb, v, Vsb, phi_0, gamma))
+            full_ids[vgb].append(ids[-1])
 
         Idsn_dw_x = Idsn_dw_x[:int(.3 * len(Idsn_dw_x))]
         Idsn_dw_y = Idsn_dw_y[:int(.3 * len(Idsn_dw_y))]
@@ -296,6 +296,7 @@ def Problem4d14():
                 Idsn_dw_x.append(v)
                 Idsn_dw_y.append(Ids_a(W, L, u, cox, vgb, vt, v, alpha))
 
+
         Idsn_dw_x = Idsn_dw_x[:int(.3 * len(Idsn_dw_x))]
         Idsn_dw_y = Idsn_dw_y[:int(.3 * len(Idsn_dw_y))]
 
@@ -323,13 +324,6 @@ def Problem4d14():
     # Improve Alpha     Improve Alpha     Improve Alpha     Improve Alpha     Improve Alpha
     # =======================================================================================
 
-    # from part A using list full_ids, will find the max point and match to vds
-
-    vds_max = vds[full_ids[1].index(max(full_ids[1]))]
-
-    print(f"Vds before saturation: {vds_max}")
-    print(f"Vds' calculated from alpha: {vdsp} w/ {alpha=}")
-
     def Vdsp_reversed(vdsp, vgs, vt):
         """
         will use the Vdsp equation to calculate alpha from max point to obtain Vds before saturation with equation 4.7.2
@@ -337,23 +331,82 @@ def Problem4d14():
 
         return (vgs - vt) / vdsp
 
-    improved_alpha = Vdsp_reversed(vds_max, vgb, vt)
+    calculate_error = {}
+    improved_error = {}
 
-    print(f"Improved Alpha: {improved_alpha}")
+    for vgb in Vgb:
 
-    vdsp = Vdsp(vgb, vt, improved_alpha)
+        # from part A using list full_ids, will find the max point and match to vds
 
-    ids.clear(); ids = []
-    for v in vds:
-        if v <= vdsp: # Vds <= Vds'
-            ids.append( Ids_a(W, L, u, cox, vgb, vt, v, improved_alpha) )
-        else:
-            ids.append( Ids_b(W, L, u, cox, vgb, vt, improved_alpha) )
+        vdsp = Vdsp(vgb, vt, alpha)  # Vds' prime
 
-    plt.plot(vds, ids_reserved, label='4.7.2a')
-    plt.plot(vds, ids, label='4.7.24 w/alpha improved')
-    plt.legend()
-    #plt.show()
+        vds_max = vds[full_ids[vgb].index(max(full_ids[vgb]))]
+
+        print(f"Vds before saturation: {vds_max}")
+        print(f"Vds' calculated from alpha: {vdsp} w/ {alpha=}")
+
+        improved_alpha = Vdsp_reversed(vds_max, vgb, vt)
+
+        vdsp = Vdsp(vgb, vt, improved_alpha) # Vds' prime
+
+        ids = []
+        ids_cal_alpha = []
+        Idsn_dw_x = []
+        Idsn_dw_y = []
+        for v in vds:
+            if v <= vdsp: # Vds <= Vds'
+                ids.append( Ids_a(W, L, u, cox, vgb, vt, v, improved_alpha) )
+                ids_cal_alpha.append( Ids_a(W, L, u, cox, vgb, vt, v, alpha) )
+            else:
+                ids.append( Ids_b(W, L, u, cox, vgb, vt, improved_alpha) )
+                ids_cal_alpha.append( Ids_b(W, L, u, cox, vgb, vt, improved_alpha) )
+
+                # for marketing out Ids curve beyond Vds'
+                Idsn_dw_x.append(v)
+                Idsn_dw_y.append(Ids_a(W, L, u, cox, vgb, vt, v, improved_alpha))
+
+        Idsn_dw_x = Idsn_dw_x[:int(.3 * len(Idsn_dw_x))]
+        Idsn_dw_y = Idsn_dw_y[:int(.3 * len(Idsn_dw_y))]
+
+        ix = min(Idsn_dw_x) + (max(Idsn_dw_x) - min(Idsn_dw_x)) / 2
+        iy = min(Idsn_dw_y) + (max(Idsn_dw_y) - min(Idsn_dw_y)) / 2
+
+        plt.text(ix, iy, "Idsn", ha='center', va='top', fontsize=11)
+
+        plt.vlines(vdsp, min(ids), max(ids), color='grey', linestyles='--')
+        plt.hlines(max(Idsn_dw_y), 0, vdsp, color='grey', linestyles='--')
+        plt.text(vdsp, min(ids) - 0.00005, "V'ds", ha='center', va='top', fontsize=13)
+        plt.text(0, max(Idsn_dw_y), "I'ds", ha='right', va='center', fontsize=13)
+
+        #plt.plot(vds, full_ids, label='ids curve')
+        plt.plot(vds, full_ids[vgb], color='grey', label=f"Vgb={vgb:.1f}  Original")
+        plt.plot(vds, ids, label=f"Vgb={vgb:.1f} & improved: {alpha_char}={improved_alpha:.3f}", linewidth=3)
+        plt.plot(Idsn_dw_x, Idsn_dw_y, "r--")
+
+        calculate_error[vgb] = [100 * abs((e_ids - g_ids)/e_ids if e_ids > 0 else 0) for e_ids, g_ids in zip(full_ids[vgb], ids_cal_alpha)]
+        improved_error[vgb] = [100 * abs((e_ids - g_ids)/e_ids if e_ids > 0 else 0) for e_ids, g_ids in zip(full_ids[vgb], ids)]
+
+    plt.title(f"Modify Alpha --  Ids vs. Vds using 4.7.24 with {alpha_char} from 4.7.27")
+    plt.ylabel("Ids(A)", fontsize=14)
+    plt.xlabel("Vds", fontsize=14)
+    plt.legend(loc='lower right')
+    plt.show()
+
+
+    plt.title(f"Absolute Error using calculated {alpha_char} Vs the modified {alpha_char}", fontsize=13)
+
+    for vgb, error in calculate_error.items():
+        plt.plot(vds, error, "--", label=f"Vgb={vgb:.1f}: 4.7.27 Calculated {alpha_char}")
+
+    for vgb, error in improved_error.items():
+        plt.plot(vds, error, label=f"Vgb={vgb:.1f}: Improved Alpha", linewidth=3)
+
+    plt.xlabel("Vds", fontsize=14)
+    plt.ylabel("Abs( % error)", fontsize=14)
+    plt.legend(fontsize=13)
+    plt.show()
+
+
 
 
 
