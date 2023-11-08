@@ -18,7 +18,7 @@ logic = Logic(Nand(4), Inverter())
 -  logic.stages() will return number of stages, Noted as N or can use len(Logic)
 -  print(Logic) will print out Logic Path expression: 
 -  Ex.
--    Name (if given):  Stages- (N)   Delay = N * (H * pathEffort()) ^ (1 / N) + pathDelay()
+  -    Name (if given):  Stages- (N)   Delay = N * (H * pathEffort()) ^ (1 / N) + pathDelay()
 
 Gates:
 
