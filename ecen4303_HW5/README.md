@@ -6,7 +6,7 @@ and then modifying the value of alpha to improve accuracy
 
 ![image](https://github.com/jordanpaul98/homeworkProblems/assets/147276895/b2a2b8b6-54d6-4e1b-a299-0ed1e5a3c7c6)
 
-![image](https://github.com/jordanpaul98/homeworkProblems/assets/147276895/4acd15ee-61d6-4ecd-8c64-2523def578e9)
+![image](https://github.com/jordanpaul98/homeworkProblems/assets/147276895/715ad9eb-24b3-442e-ac38-8e48a15882e5)
 
 ![image](https://github.com/jordanpaul98/homeworkProblems/assets/147276895/a4dc99eb-c435-4bfc-ba41-09a5a01ff8c3)
 
