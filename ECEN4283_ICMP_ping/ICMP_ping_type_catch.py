@@ -71,8 +71,8 @@ def receiveOnePing(mySocket, ID, timeout, destAddr):
                     return "Redirect"
                 case 6:
                     return "Alternate Host Address"
-                case 8:
-                    return "Echo"
+                case 8:  # continue on
+                    pass
                 case 11:
                     return "Time Exceeded"
                 case _:
@@ -162,6 +162,7 @@ def ping(host, timeout=1):
 
         if delay == "Destination Unreachable":
             print("Destination Unreachable: exiting")
+            break
 
         print(f"Delay: {delay}\n")
         time.sleep(1)  # one second
