@@ -7,8 +7,7 @@ dog - > [d, o, g] -> [4, 15, 7] -> [00100, 01111, 00111]
 convert dog to 5 bit binary (26 letters in alphabet)
 
 
-
-
+| OUTPUT below
 
 
 
