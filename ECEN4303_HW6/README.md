@@ -45,3 +45,7 @@
 
 ![image](https://github.com/jordanpaul98/homeworkProblems/assets/147276895/d5565261-1c6c-4dae-bad7-f83cd5a376f3)
 
+![image](https://github.com/jordanpaul98/homeworkProblems/assets/147276895/8f1ea52a-504c-406c-a7a2-a31fb516886b) ![image](https://github.com/jordanpaul98/homeworkProblems/assets/147276895/fd7a010b-b73f-40a1-837d-e731d7892690)
+
+
+
